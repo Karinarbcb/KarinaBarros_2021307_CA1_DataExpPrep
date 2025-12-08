@@ -61,3 +61,48 @@ math_data$AnswerCorrectness <- math_data$`Type of Answer`
 # Inspection performance distribution
 summary(math_data$AnswerCorrectness)
 table(math_data$AnswerCorrectness)
+
+# Country-level performnce (AnswerCorrectness by Student Country)
+perf_country <- math_data %>%
+  group_by(`Student Country`) %>%
+  summarise(
+    n_responses      = n(),
+    mean_correctness = mean(AnswerCorrectness, na.rm = TRUE)
+  ) %>%
+  arrange(desc(mean_correctness))
+
+perf_country
+
+# Mean correctness by country and topic (for Heatmap)
+perf_topic_country <- math_data %>%
+  group_by(`Student Country`, Topic) %>%
+  summarise(
+    n_responses      = n(),
+    mean_correctness = mean(AnswerCorrectness, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Global mean correctness (for colour midpoint)
+global_mean <- mean(math_data$AnswerCorrectness, na.rm = TRUE)
+
+# Heatmap of country x topic
+ggplot(perf_topic_country,
+       aes(x = Topic, y = `Student Country`, fill = mean_correctness)) +
+  geom_tile(color = "grey30") +
+  scale_fill_gradient2(
+    low = "red",
+    mid = "white",
+    high = "darkgreen",
+    midpoint = global_mean,
+    name = "Correctness"
+  ) +
+  labs(
+    title = "Heatmap of Average AnswerCorrectness by Country and Topic",
+    x = "Topic",
+    y = "Student Country"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    text = element_text(size = 12)
+  )
