@@ -106,3 +106,15 @@ ggplot(perf_topic_country,
     axis.text.x = element_text(angle = 45, hjust = 1),
     text = element_text(size = 12)
   )
+
+# Country colors for plots
+country_colors <- c(
+  "Portugal"           = "#6A0DAD",  # Purple
+  "Lithuania"          = "#228B22",  # Dark green
+  "Italy"              = "#7CFC00",  # Light green
+  "Slovenia"           = "#FF4500",  # Orange
+  "Ireland"            = "#FFD700",  # Yellow
+  "Romania"            = "#DC143C",  # Red
+  "Russian Federation" = "#1E90FF",  # Blue
+  "Spain"              = "#FF69B4"   # Pink
+)
