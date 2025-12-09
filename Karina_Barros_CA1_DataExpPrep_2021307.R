@@ -197,3 +197,65 @@ perf_topic <- math_data %>%
     .groups = "drop"
   ) %>%
   arrange(mean_correctness)
+
+# Select the first seven hardest topic
+hard_topics <- perf_topic %>%
+  slice(1:7) %>%        
+  pull(Topic)
+
+hard_topics 
+
+# Filter the dataset to include only the hardest topics
+perf_tc_hard <- perf_topic_country %>%
+  filter(Topic %in% hard_topics)
+
+perf_tc_hard   
+
+# Dot plot by country for the 7 hardest topics
+ggplot(perf_tc_hard,
+       aes(x = mean_correctness,
+           y = reorder(Topic, mean_correctness))) +
+  geom_point(aes(color = `Student Country`), size = 3) +
+  facet_wrap(~ `Student Country`, ncol = 3) +
+  scale_x_continuous(labels = scales::percent_format()) +
+  scale_color_manual(values = country_colors, name = "Country") +
+  labs(
+    title = "Variation of Topic Difficulty Across Countries",
+    subtitle = "Seven Globally Hardest Topics",
+    x = "Correct Answers (%)",
+    y = "Topic"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    axis.text.x     = element_text(size = 9),
+    axis.text.y     = element_text(size = 9),
+    strip.text      = element_text(size = 12, face = "bold")
+  )
+
+# Enconding Scheme (Dummy variables)
+pca_data <- math_data %>%
+  select(
+    `Student Country`,
+    `Question Level`,
+    Topic
+  )
+
+head(pca_data)
+
+# One-Hot encoding of categorical variables
+pca_encoded <- fastDummies::dummy_cols(
+  pca_data,
+  select_columns = c("Student Country", "Question Level", "Topic"),
+  remove_selected_columns = TRUE
+)
+
+pca_matrix <- as.matrix(pca_encoded)
+pca_matrix_scaled <- scale(pca_matrix)
+
+# PCA on the scaled dummy matrix
+pca_model <- prcomp(
+  pca_matrix_scaled,
+  center = TRUE,
+  scale. = TRUE
+)
