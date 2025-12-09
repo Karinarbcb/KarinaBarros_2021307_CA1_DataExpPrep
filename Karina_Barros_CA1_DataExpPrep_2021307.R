@@ -151,3 +151,49 @@ ggplot(perf_topic,
     axis.text.y = element_text(size = 9),
     text        = element_text(size = 12)
   )
+
+# Another way to show topic difficulty but now using Lollipop chart.
+
+ggplot(perf_topic,
+       aes(x = reorder(Topic, mean_correctness),
+           y = mean_correctness)) +
+  geom_segment(aes(x = reorder(Topic, mean_correctness),
+                   xend = reorder(Topic, mean_correctness),
+                   y = 0, yend = mean_correctness),
+               color = "grey60") +
+  geom_point(size = 3, color = "navy") +
+  coord_flip() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Topic Difficulty Ranking (Lollipop Plot)",
+    x = "Topic (ordered from hardest to easiest)",
+    y = "Correct Answers (%)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 9),
+    text        = element_text(size = 12)
+  )
+
+# Mean correctness by country and topic
+perf_topic_country <- math_data %>%
+  group_by(`Student Country`, Topic) %>%
+  summarise(
+    n_responses      = n(),
+    mean_correctness = mean(AnswerCorrectness, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+perf_topic_country   
+
+# Identify the globally hardest topics (lowest mean correctness)
+
+perf_topic <- math_data %>%
+  group_by(Topic) %>%
+  summarise(
+    n_responses      = n(),
+    mean_correctness = mean(AnswerCorrectness, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(mean_correctness)
