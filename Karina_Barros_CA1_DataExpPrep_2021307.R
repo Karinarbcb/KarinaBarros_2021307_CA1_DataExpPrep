@@ -120,3 +120,34 @@ country_colors <- c(
   "Spain"              = "#FF69B4"   # Pink
 )
 
+# Topic-level difficulty: from lowest mean (hardest) to highest
+# Mean AnswerCorrectness per Topic
+perf_topic <- math_data %>%
+  group_by(Topic) %>%
+  summarise(
+    n_responses =n(),
+    mean_correctness = mean(AnswerCorrectness, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(mean_correctness) 
+
+perf_topic
+
+# Bar plot of topic difficulty (from hardest to easiest)
+ggplot(perf_topic,
+       aes(x = reorder(Topic, mean_correctness),
+           y = mean_correctness)) +
+  geom_col(fill = "darkred") +
+  coord_flip() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Topic Difficulty Based on Average AnswerCorrectness",
+    x = "Topic (ordered from hardest to easiest)",
+    y = "Correct Answers (%)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 9),
+    text        = element_text(size = 12)
+  )
