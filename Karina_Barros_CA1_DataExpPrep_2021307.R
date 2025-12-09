@@ -259,3 +259,31 @@ pca_model <- prcomp(
   center = TRUE,
   scale. = TRUE
 )
+# View general PCA summary
+summary(pca_model)
+
+# Scree Plot - variance explained by components
+fviz_eig(pca_model,
+         addlabels = TRUE,
+         barfill = "skyblue",
+         barcolor = "black") +
+  labs(title = "Scree Plot of PCA Components")
+
+# Variables PCA plot 
+fviz_pca_var(
+  pca_model,
+  col.var = "contrib",
+  gradient.cols = c("blue", "orange", "red"),
+  top_n = 10,
+  repel = TRUE
+) +
+  labs(title = "PCA – Top 10 Variable Contributions")
+
+# PCA Biplot
+fviz_pca_biplot(pca_model,
+                geom.ind = "point",
+                col.ind  = "gray50",
+                alpha.ind = 0.4,
+                col.var  = "red",
+                repel = TRUE) +
+  labs(title = "PCA Biplot – Individuals and Variables")
